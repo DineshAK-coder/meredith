@@ -7,53 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --neon-blue: #00d4ff; --neon-red: #ff2a2a; --neon-orange: #ff9d00; }
+        :root { --n-blue: #00d4ff; --n-red: #ff2a2a; --n-orange: #ff9d00; }
         body { background: #000; color: #c9d1d9; font-family: 'Space Grotesk', sans-serif; margin: 0; overflow: hidden; }
-
-        /* Video Background Styling */
-        .video-docker {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; overflow: hidden;
-        }
-        .video-docker video {
-            min-width: 100%; min-height: 100%; width: auto; height: auto;
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            object-fit: cover;
-            filter: grayscale(30%) brightness(60%);
-        }
-        .video-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(180deg, rgba(10, 12, 16, 0.9) 0%, rgba(10, 12, 16, 0.7) 100%);
-            z-index: -1;
-        }
-
-        /* Glassmorphism Panels */
-        .glass { 
-            background: rgba(255, 255, 255, 0.03); 
-            backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-        }
-        
-        /* Status Glow Effects */
-        .glow-red { text-shadow: 0 0 30px rgba(255, 42, 42, 0.8); }
-        .glow-blue { text-shadow: 0 0 30px rgba(0, 212, 255, 0.6); }
-        .glow-orange { text-shadow: 0 0 30px rgba(255, 157, 0, 0.6); }
-
+        .video-docker { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; overflow: hidden; }
+        .video-docker video { min-width: 100%; min-height: 100%; object-fit: cover; filter: brightness(40%); }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10,12,16,0.8); z-index: -1; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glow-red { text-shadow: 0 0 30px var(--n-red); color: var(--n-red) !important; }
+        .glow-blue { text-shadow: 0 0 30px var(--n-blue); color: var(--n-blue) !important; }
+        .glow-orange { text-shadow: 0 0 30px var(--n-orange); color: var(--n-orange) !important; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        
-        /* Custom UI Elements */
         .slider-custom { -webkit-appearance: none; height: 2px; background: rgba(255,255,255,0.1); outline: none; }
-        .slider-custom::-webkit-slider-thumb { 
-            -webkit-appearance: none; width: 14px; height: 14px; 
-            background: var(--neon-blue); border-radius: 2px; cursor: pointer; 
-            box-shadow: 0 0 10px var(--neon-blue); 
-        }
-
-        .status-text { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .slider-custom::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; background: var(--n-blue); border-radius: 2px; cursor: pointer; box-shadow: 0 0 10px var(--n-blue); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-center items-center p-4 md:p-8">
+<body class="min-h-screen flex flex-col justify-center items-center p-8">
 
     <div class="video-docker">
         <video autoplay muted loop playsinline>
@@ -63,171 +31,105 @@
     <div class="video-overlay"></div>
 
     <div class="w-full max-w-6xl relative z-10">
-        
         <header class="flex justify-between items-center mb-10 px-4">
             <div class="flex items-center gap-5">
-                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl shadow-2xl shadow-blue-500/40">TS</div>
+                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl">TS</div>
                 <div>
                     <h1 class="text-2xl font-bold tracking-tighter text-white uppercase">ThermalShield <span class="text-blue-500">AI</span></h1>
-                    <p class="text-[10px] mono text-gray-400 uppercase tracking-[0.3em]">Fleet Defense Intelligence // Internal Systems</p>
+                    <p class="text-[9px] mono text-gray-400 uppercase tracking-[0.3em]">Internal Fleet Security // Fleet_ID: 0092</p>
                 </div>
             </div>
-            <div class="flex gap-8 items-center text-right">
-                <div class="hidden md:block">
-                    <p class="text-[9px] mono text-gray-500 uppercase tracking-widest">Auth Code: TS-0092</p>
-                    <p id="mode-badge" class="text-xs mono text-blue-400 font-bold tracking-widest uppercase">Manual_Mode</p>
-                </div>
-                <p id="clock" class="text-sm mono text-white font-light border-l border-gray-700 pl-8">00:00:00</p>
-            </div>
+            <p id="clock" class="text-sm mono text-white font-light">00:00:00</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <div class="lg:col-span-7 flex flex-col gap-6">
-                <div class="glass p-10 rounded-3xl h-full border-t-2 border-blue-500/30">
-                    
+            <div class="lg:col-span-7">
+                <div class="glass p-10 rounded-3xl border-t-2 border-blue-500/30">
                     <div id="manual-inputs" class="space-y-12">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12">
-                            <div>
-                                <div class="flex justify-between text-[10px] mono mb-4 text-gray-500 uppercase tracking-widest"><span>Core Temp</span><span id="t-v" class="text-white">40°C</span></div>
-                                <input type="range" id="temp" min="20" max="120" value="40" class="slider-custom w-full" oninput="updateUI()">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[10px] mono mb-4 text-gray-500 uppercase tracking-widest"><span>Smoke density</span><span id="s-v" class="text-white">0.0%</span></div>
-                                <input type="range" id="smoke" min="0" max="5" step="0.1" value="0" class="slider-custom w-full" oninput="updateUI()">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[10px] mono mb-4 text-gray-500 uppercase tracking-widest"><span>Grid Load (kW)</span><span id="l-v" class="text-white">300</span></div>
-                                <input type="range" id="load" min="100" max="600" value="300" class="slider-custom w-full" oninput="updateUI()">
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-[10px] mono mb-4 text-gray-500 uppercase tracking-widest"><span>Fuel Injection</span><span id="f-v" class="text-white">25</span></div>
-                                <input type="range" id="fuel" min="5" max="60" value="25" class="slider-custom w-full" oninput="updateUI()">
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div><p class="text-[10px] mono mb-4 text-gray-500 uppercase">Temp: <span id="t-v" class="text-white">40°C</span></p><input type="range" id="temp" min="20" max="120" value="40" class="slider-custom w-full" oninput="u()"></div>
+                            <div><p class="text-[10px] mono mb-4 text-gray-500 uppercase">Smoke: <span id="s-v" class="text-white">0%</span></p><input type="range" id="smoke" min="0" max="5" step="0.1" value="0" class="slider-custom w-full" oninput="u()"></div>
+                            <div><p class="text-[10px] mono mb-4 text-gray-500 uppercase">Load: <span id="l-v" class="text-white">300</span></p><input type="range" id="load" min="100" max="600" value="300" class="slider-custom w-full" oninput="u()"></div>
+                            <div><p class="text-[10px] mono mb-4 text-gray-500 uppercase">Fuel: <span id="f-v" class="text-white">25</span></p><input type="range" id="fuel" min="5" max="60" value="25" class="slider-custom w-full" oninput="u()"></div>
                         </div>
-                        <button onclick="runManualScan()" class="w-full py-5 bg-white/5 hover:bg-blue-600 border border-white/10 hover:border-blue-500 text-white text-[11px] font-bold uppercase tracking-[0.4em] transition-all rounded-xl shadow-lg">Run Thermal Diagnostic</button>
+                        <button onclick="runScan()" class="w-full py-5 bg-blue-600/20 border border-blue-500/50 text-white text-[11px] font-bold uppercase tracking-[0.4em] rounded-xl hover:bg-blue-600 hover:text-white transition-all">Execute Scan</button>
                     </div>
 
                     <div id="live-grid" class="hidden grid grid-cols-2 gap-4 py-6">
-                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                            <p class="text-[9px] mono text-gray-500 mb-2 uppercase tracking-widest">Thermal.A1</p>
-                            <h4 id="l-temp" class="text-4xl font-bold text-white tracking-tighter">--</h4>
-                        </div>
-                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                            <p class="text-[9px] mono text-gray-500 mb-2 uppercase tracking-widest">Aerosol.A1</p>
-                            <h4 id="l-smoke" class="text-4xl font-bold text-white tracking-tighter">--</h4>
-                        </div>
-                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                            <p class="text-[9px] mono text-gray-500 mb-2 uppercase tracking-widest">Energy.Load</p>
-                            <h4 id="l-load" class="text-4xl font-bold text-white tracking-tighter">--</h4>
-                        </div>
-                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl">
-                            <p class="text-[9px] mono text-gray-500 mb-2 uppercase tracking-widest">Fuel.Sync</p>
-                            <h4 id="l-fuel" class="text-4xl font-bold text-white tracking-tighter">--</h4>
-                        </div>
+                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl"><p class="text-[9px] mono text-gray-500 mb-2">TEMP</p><h4 id="l-temp" class="text-4xl font-bold text-white">--</h4></div>
+                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl"><p class="text-[9px] mono text-gray-500 mb-2">SMOKE</p><h4 id="l-smoke" class="text-4xl font-bold text-white">--</h4></div>
+                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl"><p class="text-[9px] mono text-gray-500 mb-2">LOAD</p><h4 id="l-load" class="text-4xl font-bold text-white">--</h4></div>
+                        <div class="p-6 bg-white/5 border border-white/10 rounded-2xl"><p class="text-[9px] mono text-gray-500 mb-2">FUEL</p><h4 id="l-fuel" class="text-4xl font-bold text-white">--</h4></div>
                     </div>
-
-                    <button id="toggle-btn" onclick="toggleLive()" class="w-full mt-6 py-4 bg-blue-600/10 hover:bg-blue-600/20 border border-blue-500/40 text-blue-400 text-[10px] font-bold uppercase tracking-[0.4em] transition-all rounded-xl">Initialize ThermalShield Sync</button>
+                    <button id="toggle-btn" onclick="toggleLive()" class="w-full mt-6 py-4 bg-white/5 border border-white/10 text-blue-400 text-[10px] font-bold uppercase tracking-[0.4em] rounded-xl">Initialize Live Sync</button>
                 </div>
             </div>
 
-            <div id="status-panel" class="lg:col-span-5 glass rounded-3xl flex flex-col items-center justify-between p-12 transition-all duration-1000 overflow-hidden relative">
-                
-                <div class="text-center w-full relative z-10">
-                    <p class="text-[10px] mono text-gray-600 uppercase tracking-[0.6em] mb-20">Risk Assessment Engine</p>
-                    <div class="h-40 flex items-center justify-center">
-                        <h2 id="risk-text" class="status-text text-8xl font-black text-white/5 tracking-tighter italic uppercase">Ready</h2>
-                    </div>
+            <div id="status-panel" class="lg:col-span-5 glass rounded-3xl flex flex-col items-center justify-between p-12 transition-all">
+                <p class="text-[10px] mono text-gray-600 uppercase tracking-[0.6em] mb-10">AI Classification</p>
+                <div class="h-40 flex items-center justify-center">
+                    <h2 id="risk-text" class="text-8xl font-black text-white/5 tracking-tighter italic uppercase transition-all duration-500">Ready</h2>
                 </div>
-
-                <div class="w-full text-center relative z-10">
-                    <p id="risk-desc" class="text-xs text-gray-400 mb-12 max-w-[280px] mx-auto leading-relaxed font-light">ThermalShield active. Connect telemetry for predictive analysis.</p>
-                    
-                    <div class="bg-black/50 rounded-xl border border-white/5 p-5 text-left h-36 overflow-hidden">
-                        <div id="log" class="text-[9px] mono text-blue-400/50 space-y-2">
-                            <div>> ThermalShield Core Active</div>
-                            <div>> Port Engine Link Established</div>
-                        </div>
-                    </div>
+                <div class="w-full text-center">
+                    <p id="risk-desc" class="text-xs text-gray-400 mb-10 leading-relaxed font-light">Connect telemetry for analysis.</p>
+                    <div class="bg-black/50 rounded-xl p-4 text-left h-32 overflow-hidden"><div id="log" class="text-[9px] mono text-blue-400/50 space-y-2"><div>> System Boot</div></div></div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script>
         let liveInt = null;
-        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }
-        setInterval(updateClock, 1000);
-
-        function updateUI() {
+        function u() {
             document.getElementById('t-v').innerText = document.getElementById('temp').value + "°C";
             document.getElementById('s-v').innerText = document.getElementById('smoke').value + "%";
             document.getElementById('l-v').innerText = document.getElementById('load').value;
             document.getElementById('f-v').innerText = document.getElementById('fuel').value;
         }
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
 
         function setStatus(level) {
-            const panel = document.getElementById('status-panel');
             const text = document.getElementById('risk-text');
             const desc = document.getElementById('risk-desc');
             const log = document.getElementById('log');
-
             text.classList.remove('glow-red', 'glow-blue', 'glow-orange');
             
             if(level === 2) {
-                text.innerText = "Critical"; 
-                text.className = "status-text text-7xl font-black text-red-500 italic glow-red";
-                desc.innerText = "CRITICAL: Ignition patterns detected. Execute emergency protocols.";
-                log.innerHTML += `<div class="text-red-500 font-bold">> [SHIELD_ALERT] HIGH FIRE RISK</div>`;
+                text.innerText = "Critical"; text.className = "text-7xl font-black italic glow-red";
+                desc.innerText = "CRITICAL RISK: Ignition probability at max threshold.";
+                log.innerHTML += `<div class="text-red-500">> [ALARM] EMERGENCY PROTOCOL ACTIVE</div>`;
             } else if(level === 1) {
-                text.innerText = "Elevated"; 
-                text.className = "status-text text-7xl font-black text-orange-400 italic glow-orange";
-                desc.innerText = "ELEVATED: ThermalShield detecting localized heat anomalies.";
-                log.innerHTML += `<div class="text-orange-400">> [SHIELD_WARN] ANOMALY LOGGED</div>`;
+                text.innerText = "Elevated"; text.className = "text-7xl font-black italic glow-orange";
+                desc.innerText = "ELEVATED RISK: Thermal anomalies detected.";
+                log.innerHTML += `<div>> [WARN] ANOMALY LOGGED</div>`;
             } else {
-                text.innerText = "Optimal"; 
-                text.className = "status-text text-8xl font-black text-blue-400 italic glow-blue";
-                desc.innerText = "OPTIMAL: All sensor telemetry within standard safety bounds.";
-                log.innerHTML += `<div>> [SHIELD_OK] SCAN NOMINAL</div>`;
+                text.innerText = "Optimal"; text.className = "text-8xl font-black italic glow-blue";
+                desc.innerText = "OPTIMAL: All sensors reporting within safety bounds.";
+                log.innerHTML += `<div>> [INFO] SCAN NOMINAL</div>`;
             }
             if(log.children.length > 5) log.firstElementChild.remove();
         }
 
-        async function runManualScan() {
-            const payload = {
-                temp: document.getElementById('temp').value,
-                smoke: document.getElementById('smoke').value,
-                load: document.getElementById('load').value,
-                fuel: document.getElementById('fuel').value
-            };
-            const res = await fetch('/predict', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
+        async function runScan() {
+            const r = await fetch('/predict', {
+                method: 'POST', headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ temp: document.getElementById('temp').value, smoke: document.getElementById('smoke').value, load: document.getElementById('load').value, fuel: document.getElementById('fuel').value })
             });
-            const d = await res.json();
+            const d = await r.json();
             setStatus(d.risk_level);
         }
 
         async function toggleLive() {
             const btn = document.getElementById('toggle-btn');
-            const manual = document.getElementById('manual-inputs');
-            const grid = document.getElementById('live-grid');
-            const badge = document.getElementById('mode-badge');
-
             if(liveInt) {
                 clearInterval(liveInt); liveInt = null;
-                btn.innerText = "Initialize ThermalShield Sync";
-                btn.classList.remove('bg-red-600/20', 'text-red-400', 'border-red-500/40');
-                manual.classList.remove('hidden'); grid.classList.add('hidden');
-                badge.innerText = "Manual_Mode"; badge.classList.remove('text-red-500');
+                btn.innerText = "Initialize Live Sync";
+                document.getElementById('manual-inputs').classList.remove('hidden');
+                document.getElementById('live-grid').classList.add('hidden');
             } else {
-                manual.classList.add('hidden'); grid.classList.remove('hidden');
-                btn.innerText = "Deactivate Shield Feed";
-                btn.classList.add('bg-red-600/20', 'text-red-400', 'border-red-500/40');
-                badge.innerText = "Live_Monitoring"; badge.classList.add('text-red-500');
-                
+                btn.innerText = "Stop Live Feed";
+                document.getElementById('manual-inputs').classList.add('hidden');
+                document.getElementById('live-grid').classList.remove('hidden');
                 liveInt = setInterval(async () => {
                     const r = await fetch('/api/live-telemetry');
                     const d = await r.json();
