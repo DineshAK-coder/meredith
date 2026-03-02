@@ -3,92 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FireGuard AI | Naval Risk Intelligence</title>
+    <title>FireGuard AI | Live Naval Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #0d1117; color: #c9d1d9; font-family: 'Inter', sans-serif; }
         .glass { background: rgba(22, 27, 34, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(240, 246, 252, 0.1); }
         .neon-red { border: 1px solid #ff4b4b; box-shadow: 0 0 15px rgba(255, 75, 75, 0.3); }
         .neon-green { border: 1px solid #238636; box-shadow: 0 0 15px rgba(35, 134, 54, 0.3); }
+        .neon-orange { border: 1px solid #d29922; box-shadow: 0 0 15px rgba(210, 153, 34, 0.3); }
+        .live-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         input[type=range] { accent-color: #58a6ff; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-10">
+<body class="min-h-screen p-6 md:p-10">
     <div class="max-w-5xl mx-auto">
-        <div class="flex justify-between items-center mb-12 border-b border-gray-800 pb-6">
+        <div class="flex justify-between items-center mb-10 border-b border-gray-800 pb-6">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-white">FIREGUARD <span class="text-blue-500">AI</span></h1>
-                <p class="text-xs text-gray-500 uppercase tracking-widest">Predictive Thermal Intelligence</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mt-1">HullGuard Ecosystem v2.1</p>
             </div>
-            <div id="status-badge" class="px-4 py-1 rounded-full text-[10px] font-bold bg-green-900/20 text-green-400 border border-green-500/30">
-                SYSTEM ACTIVE
+            <div id="mode-badge" class="px-4 py-1 rounded-full text-[10px] font-bold bg-blue-900/20 text-blue-400 border border-blue-500/30">
+                MANUAL CALIBRATION
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 space-y-6">
-                <div class="glass p-6 rounded-2xl">
-                    <h3 class="text-sm font-semibold mb-8 text-gray-400 uppercase">Onboard Telemetry Controls</h3>
+                <div class="glass p-8 rounded-3xl relative overflow-hidden">
+                    <h3 class="text-xs font-semibold mb-10 text-gray-500 uppercase tracking-widest">Telemetry Interface</h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-6">
-                            <div>
-                                <div class="flex justify-between text-xs mb-2">
-                                    <span>Core Temperature</span>
-                                    <span id="temp-val" class="text-blue-400">40°C</span>
+                    <div id="manual-controls" class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                            <div class="space-y-8">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-3"><span>Temp (°C)</span><span id="temp-val" class="text-blue-400">40</span></div>
+                                    <input type="range" id="temp" min="20" max="120" value="40" class="w-full" oninput="updateUI()">
                                 </div>
-                                <input type="range" id="temp" min="20" max="120" value="40" class="w-full" oninput="updateUI()">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-3"><span>Smoke (%)</span><span id="smoke-val" class="text-blue-400">0.0</span></div>
+                                    <input type="range" id="smoke" min="0" max="5" step="0.1" value="0" class="w-full" oninput="updateUI()">
+                                </div>
                             </div>
-                            <div>
-                                <div class="flex justify-between text-xs mb-2">
-                                    <span>Smoke Obscuration</span>
-                                    <span id="smoke-val" class="text-blue-400">0.0%</span>
+                            <div class="space-y-8">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-3"><span>Load (kW)</span><span id="load-val" class="text-blue-400">300</span></div>
+                                    <input type="range" id="load" min="100" max="600" value="300" class="w-full" oninput="updateUI()">
                                 </div>
-                                <input type="range" id="smoke" min="0" max="5" step="0.1" value="0" class="w-full" oninput="updateUI()">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-3"><span>Fuel Flow</span><span id="fuel-val" class="text-blue-400">25</span></div>
+                                    <input type="range" id="fuel" min="5" max="60" value="25" class="w-full" oninput="updateUI()">
+                                </div>
                             </div>
                         </div>
+                        <button onclick="runManualScan()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition-all">Execute Risk Prediction</button>
+                    </div>
 
-                        <div class="space-y-6">
-                            <div>
-                                <div class="flex justify-between text-xs mb-2">
-                                    <span>Electrical Load (kW)</span>
-                                    <span id="load-val" class="text-blue-400">300</span>
-                                </div>
-                                <input type="range" id="load" min="100" max="600" value="300" class="w-full" oninput="updateUI()">
+                    <div id="live-monitor" class="hidden py-10 text-center">
+                        <div class="live-pulse inline-block mb-4 px-3 py-1 bg-red-500/10 text-red-500 text-[10px] font-bold rounded border border-red-500/20 uppercase">Live Sensor Feed Active</div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                            <div class="p-4 bg-gray-900/40 rounded-xl border border-gray-800">
+                                <div class="text-[10px] text-gray-500 mb-1">TEMP</div>
+                                <div id="live-temp" class="text-xl font-mono text-white">--</div>
                             </div>
-                            <div>
-                                <div class="flex justify-between text-xs mb-2">
-                                    <span>Fuel Flow Rate</span>
-                                    <span id="fuel-val" class="text-blue-400">25</span>
-                                </div>
-                                <input type="range" id="fuel" min="5" max="60" value="25" class="w-full" oninput="updateUI()">
+                            <div class="p-4 bg-gray-900/40 rounded-xl border border-gray-800">
+                                <div class="text-[10px] text-gray-500 mb-1">SMOKE</div>
+                                <div id="live-smoke" class="text-xl font-mono text-white">--</div>
+                            </div>
+                            <div class="p-4 bg-gray-900/40 rounded-xl border border-gray-800">
+                                <div class="text-[10px] text-gray-500 mb-1">LOAD</div>
+                                <div id="live-load" class="text-xl font-mono text-white">--</div>
+                            </div>
+                            <div class="p-4 bg-gray-900/40 rounded-xl border border-gray-800">
+                                <div class="text-[10px] text-gray-500 mb-1">FUEL</div>
+                                <div id="live-fuel" class="text-xl font-mono text-white">--</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-10 flex gap-4">
-                        <button onclick="runManualScan()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold text-sm transition-all uppercase tracking-wider">
-                            Execute Manual Scan
-                        </button>
-                        <button onclick="fetchLiveSync()" class="flex-1 border border-gray-700 hover:border-blue-500 text-gray-300 py-3 rounded-xl font-bold text-sm transition-all uppercase tracking-wider">
-                            📡 Sync Live Data
+                    <div class="mt-8 pt-8 border-t border-gray-800">
+                        <button id="toggle-btn" onclick="toggleLiveMode()" class="w-full border border-gray-700 hover:border-blue-500 text-gray-400 py-3 rounded-xl font-bold text-[10px] uppercase tracking-[0.2em] transition-all">
+                            Start Live Sync Prediction
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div id="risk-card" class="glass p-8 rounded-2xl flex flex-col items-center justify-center transition-all duration-500">
-                <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-4">Risk Assessment</p>
-                <div id="risk-text" class="text-6xl font-black text-gray-700 mb-4">--</div>
-                <p id="risk-desc" class="text-xs text-gray-500 text-center leading-relaxed">System awaiting data input for risk categorization.</p>
+            <div id="risk-card" class="glass p-10 rounded-3xl flex flex-col items-center justify-center transition-all duration-700">
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-6">Risk Assessment</p>
+                <div id="risk-text" class="text-6xl font-black text-gray-800 mb-6">--</div>
+                <p id="risk-desc" class="text-xs text-gray-500 text-center leading-relaxed">System offline. Connect to telemetry to begin analysis.</p>
             </div>
         </div>
     </div>
 
     <script>
+        let liveInterval = null;
+
         function updateUI() {
-            document.getElementById('temp-val').innerText = document.getElementById('temp').value + "°C";
-            document.getElementById('smoke-val').innerText = document.getElementById('smoke').value + "%";
+            document.getElementById('temp-val').innerText = document.getElementById('temp').value;
+            document.getElementById('smoke-val').innerText = document.getElementById('smoke').value;
             document.getElementById('load-val').innerText = document.getElementById('load').value;
             document.getElementById('fuel-val').innerText = document.getElementById('fuel').value;
         }
@@ -99,17 +113,17 @@
             const desc = document.getElementById('risk-desc');
 
             if (level === 2) {
-                card.className = "glass p-8 rounded-2xl flex flex-col items-center justify-center neon-red bg-red-900/10";
-                text.innerText = "HIGH"; text.className = "text-6xl font-black text-red-500 mb-4";
-                desc.innerText = "CRITICAL: Thermal patterns indicate imminent ignition risk.";
+                card.className = "glass p-10 rounded-3xl flex flex-col items-center justify-center neon-red bg-red-900/10";
+                text.innerText = "HIGH"; text.className = "text-6xl font-black text-red-500 mb-6";
+                desc.innerText = "CRITICAL: Predictive patterns match high-probability ignition events.";
             } else if (level === 1) {
-                card.className = "glass p-8 rounded-2xl flex flex-col items-center justify-center border-orange-500/50 bg-orange-900/10";
-                text.innerText = "MID"; text.className = "text-6xl font-black text-orange-400 mb-4";
-                desc.innerText = "CAUTION: Abnormal fluctuations detected. Increase surveillance.";
+                card.className = "glass p-10 rounded-3xl flex flex-col items-center justify-center neon-orange bg-orange-900/10";
+                text.innerText = "MID"; text.className = "text-6xl font-black text-orange-400 mb-6";
+                desc.innerText = "WARNING: Thermal instability detected. Monitor localized hot zones.";
             } else {
-                card.className = "glass p-8 rounded-2xl flex flex-col items-center justify-center neon-green bg-green-900/10";
-                text.innerText = "SAFE"; text.className = "text-6xl font-black text-green-400 mb-4";
-                desc.innerText = "OPTIMAL: All sensor metrics within safe operational parameters.";
+                card.className = "glass p-10 rounded-3xl flex flex-col items-center justify-center neon-green bg-green-900/10";
+                text.innerText = "SAFE"; text.className = "text-6xl font-black text-green-400 mb-6";
+                desc.innerText = "NOMINAL: Sensor telemetry remains within standard safety bounds.";
             }
         }
 
@@ -118,8 +132,7 @@
                 temp: document.getElementById('temp').value,
                 smoke: document.getElementById('smoke').value,
                 load: document.getElementById('load').value,
-                fuel: document.getElementById('fuel').value,
-                vibe: 0.4
+                fuel: document.getElementById('fuel').value
             };
             const res = await fetch('/predict', {
                 method: 'POST',
@@ -130,22 +143,44 @@
             displayRisk(data.risk_level);
         }
 
-        async function fetchLiveSync() {
-            const badge = document.getElementById('status-badge');
-            badge.innerText = "SYNCING DATA...";
-            
-            const res = await fetch('/api/live-telemetry');
-            const data = await res.json();
+        async function toggleLiveMode() {
+            const btn = document.getElementById('toggle-btn');
+            const manual = document.getElementById('manual-controls');
+            const live = document.getElementById('live-monitor');
+            const badge = document.getElementById('mode-badge');
 
-            // Sync Sliders
-            document.getElementById('temp').value = data.telemetry.temp;
-            document.getElementById('smoke').value = data.telemetry.smoke;
-            document.getElementById('load').value = data.telemetry.load;
-            document.getElementById('fuel').value = data.telemetry.fuel;
-            updateUI();
-            
-            displayRisk(data.risk_level);
-            setTimeout(() => { badge.innerText = "SYSTEM ACTIVE"; }, 1000);
+            if (liveInterval) {
+                // STOP LIVE MODE
+                clearInterval(liveInterval);
+                liveInterval = null;
+                btn.innerText = "Start Live Sync Prediction";
+                btn.classList.remove('bg-red-600', 'text-white');
+                manual.classList.remove('hidden');
+                live.classList.add('hidden');
+                badge.innerText = "MANUAL CALIBRATION";
+                badge.className = "px-4 py-1 rounded-full text-[10px] font-bold bg-blue-900/20 text-blue-400 border border-blue-500/30";
+            } else {
+                // START LIVE MODE
+                manual.classList.add('hidden');
+                live.classList.remove('hidden');
+                btn.innerText = "Stop Live Sync";
+                btn.classList.add('bg-red-600', 'text-white');
+                badge.innerText = "LIVE MONITORING";
+                badge.className = "px-4 py-1 rounded-full text-[10px] font-bold bg-red-900/20 text-red-400 border border-red-500/30";
+                
+                // Poll every 1.5 seconds (the "lag" you requested)
+                liveInterval = setInterval(async () => {
+                    const res = await fetch('/api/live-telemetry');
+                    const data = await res.json();
+                    
+                    document.getElementById('live-temp').innerText = data.telemetry.temp + "°";
+                    document.getElementById('live-smoke').innerText = data.telemetry.smoke + "%";
+                    document.getElementById('live-load').innerText = data.telemetry.load;
+                    document.getElementById('live-fuel').innerText = data.telemetry.fuel;
+                    
+                    displayRisk(data.risk_level);
+                }, 1500);
+            }
         }
     </script>
 </body>
